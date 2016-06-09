@@ -1,13 +1,13 @@
 {
-  "name": "atom-neovim",
-  "main": "./lib/vim-mode",
-  "version": "0.10.1",
-  "description": "Make Atom your GUI to Neovim.",
+  "name": "nvim-mode",
+  "main": "./lib/nvim-mode",
+  "version": "0.0.1",
+  "description": "Connect to a remote Neovim server... and use that to edit!",
   "license": "MIT",
   "private": true,
-  "repository": "https://github.com/carlosdcastillo/vim-mode",
+  "repository": "https://github.com/tjdevries/nvim-mode",
   "engines": {
-    "atom": ">0.174.0"
+    "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
     "underscore-plus": "1.x",
