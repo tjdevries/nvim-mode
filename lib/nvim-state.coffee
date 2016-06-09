@@ -8,16 +8,16 @@ util = require 'util'
 
 Session = require 'msgpack5rpc'
 
-VimUtils = require './vim-utils'
-VimGlobals = require './vim-globals'
-VimSync = require './vim-sync'
+VimUtils = require './nvim-utils'
+VimGlobals = require './nvim-globals'
+VimSync = require './nvim-sync'
 
 if os.platform() is 'win32'
   CONNECT_TO = '\\\\.\\pipe\\neovim'
 else
   CONNECT_TO = '/tmp/neovim/neovim'
 
-DEBUG = false
+DEBUG = true
 
 COLS = 120
 
@@ -341,7 +341,7 @@ ns_redraw_win_end = () ->
           filename = 'newfile'+next_new_file_id
           next_new_file_id = next_new_file_id + 1
 
-        #console.log 'orig filename reported by vim:',filename
+        #console.log 'orig filename reported by nvim:',filename
         ncefn =  VimUtils.normalize_filename(uri)
         nfn = VimUtils.normalize_filename(filename)
 
@@ -354,7 +354,7 @@ ns_redraw_win_end = () ->
         #  if filename and uri
         #    sync_lines()
       else if filename of non_file_assoc_nvim_to_atom
-        
+
       else
         tmpfilename = 'newfile'+next_new_file_id
         next_new_file_id = next_new_file_id + 1
@@ -475,7 +475,7 @@ destroyPaneItem = (event) ->
         ((filename) ->
 
             #filename = VimUtils.buf2str(filename)
-          console.log 'filename reported by vim:',filename
+          console.log 'filename reported by nvim:',filename
           console.log 'current editor uri:',uri
           ncefn =  VimUtils.normalize_filename(uri)
           nfn =  VimUtils.normalize_filename(filename)
@@ -618,7 +618,7 @@ class EventHandler
             catch
               @vimState.location[1] = 0
               console.log 'problem in goto'
-                
+
         else if x[0] is 'set_scroll_region'
           @screen_top = parseInt(util.inspect(x[1][0]))
           @screen_bot = parseInt(util.inspect(x[1][1]))
@@ -737,7 +737,7 @@ class EventHandler
                 @vimState.scrolled_down = false
             catch error
 
-                
+
               console.log 'problem scrolling:',error
               console.log 'stack:',error.stack
 
@@ -1044,7 +1044,7 @@ class VimState
 
       sbt = @status_bar.join('')
       @updateStatusBarWithText(sbt, (rows - 1 == @location[0]), @location[1])
-      
+
       q = screen[rows-2]
       text = q[q.length/2..q.length-1].join('')
       text = text.split(' ').join('')
@@ -1182,4 +1182,3 @@ class VimState
 
   updateStatusBar: ->
     element.innerHTML = mode
-

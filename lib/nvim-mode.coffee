@@ -1,7 +1,7 @@
 
 {Disposable, CompositeDisposable} = require 'event-kit'
 
-VimState = require './vim-state'
+NvimState = require './nvim-state'
 
 module.exports =
 
@@ -16,14 +16,13 @@ module.exports =
 
       if editorView
         console.log 'view:',editorView
-        editorView.classList.add('vim-mode')
-        editorView.vimState = new VimState(editorView)
+        editorView.classList.add('nvim-mode')
+        editorView.nvimState = new NvimState(editorView)
 
 
   deactivate: ->
 
     atom.workspaceView?.eachEditorView (editorView) ->
-      editorView.off('.vim-mode')
+      editorView.off('.nvim-mode')
 
     @disposables.dispose()
-
