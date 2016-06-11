@@ -1,0 +1,26 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Toggle nvim-mode",
+        "command": "nvim-mode:toggle"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "nvim-mode",
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "nvim-mode:toggle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
