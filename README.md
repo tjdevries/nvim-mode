@@ -1,5 +1,11 @@
 # nvim-mode package
 
-A short description of your package.
+This package attempts to create a plugin so that Atom can be used as the GUI for Neovim.
+This will use the remote plugin / UI architecture of Neovim.
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+## Influences
+
+The main influences of this project include:
+  - [Carlos' vim-mode](https://github.com/carlosdcastillo/vim-mode)
+  - [Nyaovim](https://github.com/rhysd/NyaoVim)
+  - [Neovim-e](https://github.com/coolwanglu/neovim-e)
