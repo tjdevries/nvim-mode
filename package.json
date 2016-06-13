@@ -1,10 +1,9 @@
 {
   "name": "nvim-mode",
   "main": "./lib/nvim-mode",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Use Atom as your GUI for Neovim",
-  "keywords": [
-  ],
+  "keywords": [],
   "activationCommands": {
     "atom-workspace": "nvim-mode:toggle"
   },
@@ -13,6 +12,5 @@
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
