@@ -1,7 +1,7 @@
 {
   "name": "nvim-mode",
   "main": "./lib/nvim-mode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Connect to a remote Neovim server... and use that to edit!",
   "license": "MIT",
   "private": true,
@@ -12,8 +12,8 @@
   "dependencies": {
     "underscore-plus": "1.x",
     "event-kit": "^0.7.2",
-    "atom-space-pen-views":"^2.0.3",
-    "jquery":"^2",
-    "msgpack5rpc":"1.0.1"
+    "atom-space-pen-views": "^2.0.3",
+    "jquery": "^2",
+    "msgpack5rpc": "1.0.1"
   }
 }
