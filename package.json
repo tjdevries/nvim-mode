@@ -1,7 +1,7 @@
 {
   "name": "nvim-mode",
   "main": "./lib/nvim-mode",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Use Atom as your GUI for Neovim",
   "keywords": [],
   "activationCommands": {
