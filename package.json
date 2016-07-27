@@ -12,5 +12,12 @@
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "coffeelintConfig": {
+    "indentation": {
+      "level": "error",
+      "value": 2
+    },
+    "max_line_length": 140
+  }
 }

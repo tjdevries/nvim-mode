@@ -1,49 +1,27 @@
-'use babel';
+# import NvimModeView from './nvim-mode-view';
 
-import NvimModeView from './nvim-mode-view';
-import { CompositeDisposable } from 'atom';
+{Disposable, CompositeDisposable} = require 'event-kit'
+NvimState = './nvim-state'
 
-export default {
+module.exports =
 
-  nvimModeView: null,
-  modalPanel: null,
-  subscriptions: null,
+  activate: ->
 
-  activate(state) {
-    this.nvimModeView = new NvimModeView(state.nvimModeViewState);
-    this.modalPanel = atom.workspace.addModalPanel({
-      item: this.nvimModeView.getElement(),
-      visible: false
-    });
+    @disposables = new CompositeDisposable
 
-    // Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
-    this.subscriptions = new CompositeDisposable();
+    @disposables.add atom.workspace.observeTextEditors (editor) ->
 
-    // Register command that toggles this view
-    this.subscriptions.add(atom.commands.add('atom-workspace', {
-      'nvim-mode:toggle': () => this.toggle()
-    }));
-  },
+      console.log 'uri:',editor.getURI()
+      editorView = atom.views.getView(editor)
 
-  deactivate() {
-    this.modalPanel.destroy();
-    this.subscriptions.dispose();
-    this.nvimModeView.destroy();
-  },
+      if editorView
+        console.log 'view:',editorView
+        editorView.classList.add('nvim-mode')
+        editorView.nvimState = new NvimState(editorView)
 
-  serialize() {
-    return {
-      nvimModeViewState: this.nvimModeView.serialize()
-    };
-  },
+  deactivate: ->
 
-  toggle() {
-    console.log('NvimMode was toggled!');
-    return (
-      this.modalPanel.isVisible() ?
-      this.modalPanel.hide() :
-      this.modalPanel.show()
-    );
-  }
+    atom.workspaceView?.eachEditorView (editorView) ->
+      editorView.off('.nvim-mode')
 
-};
+      @disposables.dispose()
