@@ -9,6 +9,7 @@ else
 
 
 element = document.createElement("item-view")
+editor_views = {}
 
 nvim_send_message = (message,f = undefined) ->
   try
@@ -32,12 +33,12 @@ nvim_mode_save_file = () ->
   NvimGlobals.current_editor = atom.workspace.getActiveTextEditor()
   neovim_send_message(['vim_command',['write!']])
   setTimeout( ( ->
-    VimGlobals.current_editor.buffer.reload()
-    VimGlobals.internal_change = false
-    VimGlobals.updating = false
+    NvimGlobals.current_editor.buffer.reload()
+    NvimGlobals.internal_change = false
+    NvimGlobals.updating = false
   ), 500)
 
-  #VimGlobals.current_editor.setText(a)
+  #NvimGlobals.current_editor.setText(a)
 
 module.exports = class NvimState
   editor: null
@@ -74,8 +75,8 @@ module.exports = class NvimState
         atom.workspace.onDidDestroyPaneItem destroyPaneItem
 
     atom.commands.add 'atom-text-editor', 'core:save', (e) ->
-      VimGlobals.internal_change = true
-      VimGlobals.updating = true
+      NvimGlobals.internal_change = true
+      NvimGlobals.updating = true
       e.preventDefault()
       e.stopPropagation()
       vim_mode_save_file()
@@ -85,7 +86,7 @@ module.exports = class NvimState
       deactivate_timer()
       q1 = @editorView.classList.contains('is-focused')
       q2 = @editorView.classList.contains('autocomplete-active')
-      q3 = VimGlobals.current_editor.getSelectedBufferRange().isEmpty()
+      q3 = NvimGlobals.current_editor.getSelectedBufferRange().isEmpty()
       if q1 and not q2 and q3
         @editorView.component.setInputEnabled(false)
         q =  String.fromCharCode(e.which)
@@ -97,8 +98,8 @@ module.exports = class NvimState
         activate_timer()
         true
       else
-        VimGlobals.internal_change = false
-        VimGlobals.updating = false
+        NvimGlobals.internal_change = false
+        NvimGlobals.updating = false
         q =  String.fromCharCode(e.which)
         neovim_send_message(['vim_input',[q]])
         activate_timer()
@@ -108,7 +109,7 @@ module.exports = class NvimState
       deactivate_timer()
       q1 = @editorView.classList.contains('is-focused')
       q2 = @editorView.classList.contains('autocomplete-active')
-      q3 = VimGlobals.current_editor.getSelectedBufferRange().isEmpty()
+      q3 = NvimGlobals.current_editor.getSelectedBufferRange().isEmpty()
       if q1 and not q2 and not e.altKey and q3
         @editorView.component.setInputEnabled(false)
         translation = @translateCode(e.which, e.shiftKey, e.ctrlKey)
@@ -121,8 +122,8 @@ module.exports = class NvimState
         activate_timer()
         true
       else
-        VimGlobals.internal_change = false
-        VimGlobals.updating = false
+        NvimGlobals.internal_change = false
+        NvimGlobals.updating = false
         activate_timer()
         true
 
@@ -204,7 +205,7 @@ module.exports = class NvimState
 #console.log 'NOT SUBSCRIBING, problem'
 #
 
-#last_text = VimGlobals.current_editor.getText()
+#last_text = NvimGlobals.current_editor.getText()
 
   postprocess: (rows, dirty) ->
     screen_f = []
@@ -225,15 +226,15 @@ module.exports = class NvimState
 
   redraw_screen:(rows, dirty) =>
 
-    VimGlobals.current_editor = atom.workspace.getActiveTextEditor()
-    if VimGlobals.current_editor
+    NvimGlobals.current_editor = atom.workspace.getActiveTextEditor()
+    if NvimGlobals.current_editor
 
       if DEBUG
         initial = 0
       else
         initial = 8
 
-      sbr = VimGlobals.current_editor.getSelectedBufferRange()
+      sbr = NvimGlobals.current_editor.getSelectedBufferRange()
       @postprocess(rows, dirty)
       tlnumberarr = []
       for posi in [0..rows-3]
@@ -246,35 +247,36 @@ module.exports = class NvimState
         catch err
           tlnumberarr.push -9999
 
-      VimGlobals.tlnumber = NaN
+      NvimGlobals.tlnumber = NaN
       array = []
       for i in [0..rows-3]
         if not isNaN(tlnumberarr[i]) and tlnumberarr[i] >= 0
           array.push(tlnumberarr[i])
       #console.log array
 
-      VimGlobals.tlnumber = getMaxOccurrence(array)
+      NvimGlobals.tlnumber = getMaxOccurrence(array)
       #console.log 'TLNUMBERarr********************',tlnumberarr
-      #console.log 'TLNUMBER********************',VimGlobals.tlnumber
+      #console.log 'TLNUMBER********************',NvimGlobals.tlnumber
 
       if dirty
 
         options =  { normalizeLineEndings: false, undo: 'skip' }
         for posi in [0..rows-3]
-          if not isNaN(VimGlobals.tlnumber) and (VimGlobals.tlnumber isnt -9999)
-            if (tlnumberarr[posi] + posi == VimGlobals.tlnumber + posi) and \
+          if not isNaN(NvimGlobals.tlnumber) and \
+             (NvimGlobals.tlnumber isnt -9999)
+            if (tlnumberarr[posi] + posi == NvimGlobals.tlnumber + posi) and \
                dirty[posi]
               qq = screen_f[posi]
               qq = qq[initial..].join('')
-              linerange = new Range(new Point(VimGlobals.tlnumber+posi,0),
-                new Point(VimGlobals.tlnumber + posi,
+              linerange = new Range(new Point(NvimGlobals.tlnumber+posi,0),
+                new Point(NvimGlobals.tlnumber + posi,
                   COLS-initial))
 
-              txt = VimGlobals.current_editor.buffer.getTextInRange(linerange)
+              txt = NvimGlobals.current_editor.buffer.getTextInRange(linerange)
               if qq isnt txt
                 console.log 'qq:',qq
                 console.log 'txt:',txt
-                VimGlobals.current_editor.buffer.setTextInRange(linerange,
+                NvimGlobals.current_editor.buffer.setTextInRange(linerange,
                   qq, options)
               dirty[posi] = false
 
@@ -286,39 +288,39 @@ module.exports = class NvimState
       text = text.split(' ').join('')
       num_lines = parseInt(text, 10)
 
-      if VimGlobals.current_editor.buffer.getLastRow() < num_lines
-        nl = num_lines - VimGlobals.current_editor.buffer.getLastRow()
+      if NvimGlobals.current_editor.buffer.getLastRow() < num_lines
+        nl = num_lines - NvimGlobals.current_editor.buffer.getLastRow()
         diff = ''
         for i in [0..nl-2]
           diff = diff + '\n'
         append_options = {normalizeLineEndings: false}
-        VimGlobals.current_editor.buffer.append(diff, append_options)
+        NvimGlobals.current_editor.buffer.append(diff, append_options)
 
-      else if VimGlobals.current_editor.buffer.getLastRow() > num_lines
+      else if NvimGlobals.current_editor.buffer.getLastRow() > num_lines
         for i in [num_lines..\
-        VimGlobals.current_editor.buffer.getLastRow()-1]
-          VimGlobals.current_editor.buffer.deleteRow(i)
+        NvimGlobals.current_editor.buffer.getLastRow()-1]
+          NvimGlobals.current_editor.buffer.deleteRow(i)
 
 
-      if not isNaN(VimGlobals.tlnumber) and (VimGlobals.tlnumber isnt -9999)
+      if not isNaN(NvimGlobals.tlnumber) and (NvimGlobals.tlnumber isnt -9999)
 
         if @cursor_visible and @location[0] <= rows - 2
           if not DEBUG
-            VimGlobals.current_editor.setCursorBufferPosition(
-              new Point(VimGlobals.tlnumber + @location[0],
+            NvimGlobals.current_editor.setCursorBufferPosition(
+              new Point(NvimGlobals.tlnumber + @location[0],
                 @location[1]-initial),{autoscroll:false})
           else
-            VimGlobals.current_editor.setCursorBufferPosition(
-              new Point(VimGlobals.tlnumber + @location[0],
+            NvimGlobals.current_editor.setCursorBufferPosition(
+              new Point(NvimGlobals.tlnumber + @location[0],
                 @location[1]),{autoscroll:false})
 
-        if VimGlobals.current_editor
-          VimGlobals.current_editor.setScrollTop(lineSpacing()*\
-              VimGlobals.tlnumber)
+        if NvimGlobals.current_editor
+          NvimGlobals.current_editor.setScrollTop(lineSpacing()*\
+              NvimGlobals.tlnumber)
 
       #console.log 'sbr:',sbr
       if not sbr.isEmpty()
-        VimGlobals.current_editor.setSelectedBufferRange(sbr,
+        NvimGlobals.current_editor.setSelectedBufferRange(sbr,
           {reversed:reversed_selection})
 
   neovim_unsubscribe: ->
@@ -328,17 +330,17 @@ module.exports = class NvimState
 
   neovim_resize:(cols, rows) =>
 
-    VimGlobals.internal_change = true
-    VimGlobals.updating = true
+    NvimGlobals.internal_change = true
+    NvimGlobals.updating = true
     qtop = 10
     qbottom =0
     @rows = 0
 
-    qtop = VimGlobals.current_editor.getScrollTop()
-    qbottom = VimGlobals.current_editor.getScrollBottom()
+    qtop = NvimGlobals.current_editor.getScrollTop()
+    qbottom = NvimGlobals.current_editor.getScrollBottom()
 
-    qleft = VimGlobals.current_editor.getScrollLeft()
-    qright= VimGlobals.current_editor.getScrollRight()
+    qleft = NvimGlobals.current_editor.getScrollLeft()
+    qright= NvimGlobals.current_editor.getScrollRight()
 
     @cols = Math.floor((qright-qleft)/lineSpacingHorizontal())-1
 
@@ -354,11 +356,11 @@ module.exports = class NvimState
     @location = [0,0]
     neovim_send_message(['vim_command',['redraw!']],
       (() ->
-        VimGlobals.internal_change = false
+        NvimGlobals.internal_change = false
       )
     )
-    VimGlobals.internal_change = false
-    VimGlobals.updating = false
+    NvimGlobals.internal_change = false
+    NvimGlobals.updating = false
 
 
   neovim_subscribe: =>
@@ -369,7 +371,7 @@ module.exports = class NvimState
     message = ['ui_attach',[eventHandler.cols,eventHandler.rows,true]]
     neovim_send_message(message)
 
-    VimGlobals.session.on('notification', eventHandler.handleEvent)
+    NvimGlobals.session.on('notification', eventHandler.handleEvent)
     #rows = @editor.getScreenLineCount()
     @location = [0,0]
     @status_bar = (' ' for ux in [1..eventHandler.cols])
@@ -398,8 +400,8 @@ module.exports = class NvimState
     @updateStatusBar()
 
   changeModeClass: (targetMode) ->
-    if VimGlobals.current_editor
-      editorview = editor_views[VimGlobals.current_editor.getURI()]
+    if NvimGlobals.current_editor
+      editorview = editor_views[NvimGlobals.current_editor.getURI()]
       if editorview
         for qmode in ['command-mode',
                       'insert-mode',
@@ -420,4 +422,5 @@ module.exports = class NvimState
     element.innerHTML = q.concat(text).concat(qend)
 
   updateStatusBar: ->
+    mode = 'wut face'
     element.innerHTML = mode

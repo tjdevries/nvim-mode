@@ -1,14 +1,16 @@
 # import NvimModeView from './nvim-mode-view';
 
 {Disposable, CompositeDisposable} = require 'event-kit'
-NvimState = './nvim-state'
+NvimState = require './nvim-state'
 
 module.exports =
 
   activate: ->
+    console.log atom.workspace.getTextEditors()
 
     @disposables = new CompositeDisposable
 
+    # editor = atom.workspace.getActiveTextEditor()
     @disposables.add atom.workspace.observeTextEditors (editor) ->
 
       console.log 'uri:',editor.getURI()

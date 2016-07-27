@@ -12,7 +12,9 @@
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "event-kit": "^2.0"
+  },
   "coffeelintConfig": {
     "indentation": {
       "level": "error",
