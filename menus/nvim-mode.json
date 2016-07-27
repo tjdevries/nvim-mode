@@ -17,6 +17,10 @@
             {
               "label": "Toggle",
               "command": "nvim-mode:toggle"
+            },
+            {
+              "label": "Easy Debug",
+              "command": "nvim-mode:easy_debug"
             }
           ]
         }
